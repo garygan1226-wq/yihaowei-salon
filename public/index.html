@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>一号位沙龙·选题库</title>
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --card-bg: #ffffff;
+      --text: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --border: #e5e5ea;
+      --accent: #0071e3;
+      --green: #34c759;
+      --orange: #ff9500;
+      --red: #ff3b30;
+      --blue: #007aff;
+      --purple: #af52de;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --radius: 14px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border); padding: 14px 20px;
+    }
+    .header-inner {
+      max-width: 900px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px; }
+    .header h1 .logo {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border-radius: 8px; color: #fff; font-size: 15px; font-weight: 800;
+    }
+    .header-subtitle { font-size: 12px; color: var(--text-secondary); font-weight: 400; margin-top: 2px; }
+    .live-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-secondary); background: #f0f0f3; padding: 4px 10px; border-radius: 20px; }
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .last-sync { font-size: 11px; color: var(--text-secondary); }
+    .purpose-bar { max-width: 900px; margin: 12px auto 0; display: flex; gap: 8px; flex-wrap: wrap; }
+    .purpose-card { flex: 1; min-width: 180px; padding: 10px 14px; border-radius: 10px; font-size: 12px; line-height: 1.5; }
+    .purpose-card.who { background: linear-gradient(135deg,#e3f0ff,#d6e9ff); border-left: 3px solid var(--blue); }
+    .purpose-card.right { background: linear-gradient(135deg,#fff3e0,#ffe8cc); border-left: 3px solid var(--orange); }
+    .purpose-card.whom { background: linear-gradient(135deg,#f3e5f5,#e8d5f0); border-left: 3px solid var(--purple); }
+    .purpose-card strong { font-size: 13px; display: block; margin-bottom: 2px; }
+    .purpose-card.who strong { color: var(--blue); }
+    .purpose-card.right strong { color: var(--orange); }
+    .purpose-card.whom strong { color: var(--purple); }
+    .purpose-card span { color: var(--text-secondary); }
+    .filters { max-width: 900px; margin: 14px auto 0; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .filter-btn { padding: 7px 16px; border: none; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.2s; background: #e8e8ed; color: var(--text-secondary); font-weight: 500; }
+    .filter-btn:hover { background: #d8d8de; }
+    .filter-btn.active { color: #fff; font-weight: 600; }
+    .filter-btn[data-cat="all"].active { background: var(--text); }
+    .filter-btn[data-cat="screening"].active { background: var(--blue); }
+    .filter-btn[data-cat="calibration"].active { background: var(--orange); }
+    .filter-btn[data-cat="decision"].active { background: var(--purple); }
+    .search-box { flex: 1; min-width: 120px; max-width: 200px; padding: 7px 14px; border: 1px solid var(--border); border-radius: 20px; font-size: 13px; background: var(--card-bg); transition: border 0.2s; }
+    .search-box:focus { outline: none; border-color: var(--accent); }
+    .stats-bar { max-width: 900px; margin: 0 auto; padding: 10px 0 0; display: flex; gap: 20px; font-size: 13px; color: var(--text-secondary); flex-wrap: wrap; }
+    .stat-item { display: flex; align-items: center; gap: 5px; }
+    .stat-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .container { max-width: 900px; margin: 0 auto; padding: 16px 20px 60px; }
+    .topic-card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 12px; overflow: hidden; transition: box-shadow 0.2s; border: 1px solid var(--border); }
+    .topic-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .topic-card.dimmed { opacity: 0.6; }
+    .topic-header { padding: 16px 18px; cursor: pointer; }
+    .topic-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .category-badge { font-size: 11px; padding: 3px 9px; border-radius: 12px; font-weight: 600; color: #fff; white-space: nowrap; }
+    .category-badge.screening { background: var(--blue); }
+    .category-badge.calibration { background: var(--orange); }
+    .category-badge.decision { background: var(--purple); }
+    .topic-tag { font-size: 12px; color: var(--text-secondary); background: #f0f0f3; padding: 3px 8px; border-radius: 8px; }
+    .source-badge { font-size: 10px; padding: 2px 7px; border-radius: 8px; font-weight: 500; }
+    .source-badge.manual { background: #e8e8ed; color: var(--text-secondary); }
+    .source-badge.auto { background: #e8f5e9; color: var(--green); }
+    .topic-date { font-size: 12px; color: var(--text-secondary); margin-left: auto; }
+    .topic-title { font-size: 17px; font-weight: 700; line-height: 1.4; margin-bottom: 6px; }
+    .topic-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+    .topic-body { display: none; padding: 0 18px 16px; border-top: 1px solid var(--border); }
+    .topic-card.expanded .topic-body { display: block; }
+    .topic-card.expanded .topic-header { padding-bottom: 12px; }
+    .questions-label { font-size: 13px; font-weight: 600; color: var(--text); margin: 14px 0 8px; }
+    .question-item { font-size: 14px; color: var(--text-secondary); padding: 6px 0 6px 22px; position: relative; line-height: 1.5; }
+    .question-item::before { content: attr(data-num); position: absolute; left: 0; top: 6px; font-size: 12px; font-weight: 700; color: var(--accent); width: 16px; text-align: center; }
+    .expert-tag { margin-top: 12px; font-size: 12px; color: var(--text-secondary); padding: 8px 10px; background: #f8f8fa; border-radius: 8px; }
+    .action-bar { display: flex; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .confirm-btn { padding: 7px 16px; border: none; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px; }
+    .confirm-btn.confirmed { background: #e8f8ec; color: var(--green); border: 1px solid #c6f0d0; }
+    .confirm-btn.unconfirmed { background: #fff4e6; color: var(--orange); border: 1px solid #ffe0b3; }
+    .confirm-btn:hover { transform: scale(1.03); }
+    .notes-section { margin-top: 12px; }
+    .notes-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; font-weight: 600; }
+    .notes-input { width: 100%; min-height: 60px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical; background: #fafafa; transition: border 0.2s; }
+    .notes-input:focus { outline: none; border-color: var(--accent); background: #fff; }
+    .save-indicator { font-size: 12px; color: var(--green); margin-top: 4px; display: none; }
+    .save-indicator.show { display: block; }
+    .updated-by { font-size: 11px; color: var(--text-secondary); margin-top: 6px; }
+    .expand-arrow { float: right; font-size: 14px; color: var(--text-secondary); transition: transform 0.2s; margin-top: 3px; }
+    .topic-card.expanded .expand-arrow { transform: rotate(180deg); }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+    @media (max-width: 600px) {
+      .header h1 { font-size: 17px; }
+      .topic-title { font-size: 15px; }
+      .container { padding: 12px 14px 40px; }
+      .header-inner { gap: 6px; }
+      .purpose-card { min-width: 100%; }
+      .search-box { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <h1><span class="logo">1</span>一号位沙龙·选题库</h1>
+      <div class="header-subtitle">AI时代一号位的筛选 · 校对 · 决策</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span class="live-badge"><span class="live-dot"></span><span id="online-status">实时同步中</span></span>
+      <span class="last-sync" id="last-sync">--</span>
+    </div>
+  </div>
+  <div class="purpose-bar">
+    <div class="purpose-card who"><strong>筛选 Who</strong><span>谁是真正的AI时代一号位？</span></div>
+    <div class="purpose-card right"><strong>校对 Right</strong><span>"AI是放大器"所以方向校对</span></div>
+    <div class="purpose-card whom"><strong>决策 With whom</strong><span>洞察与决策</span></div>
+  </div>
+  <div class="filters">
+    <button class="filter-btn active" data-cat="all">全部</button>
+    <button class="filter-btn" data-cat="screening">筛选 Who</button>
+    <button class="filter-btn" data-cat="calibration">校对 Right</button>
+    <button class="filter-btn" data-cat="decision">决策 With whom</button>
+    <input class="search-box" id="search-box" type="text" placeholder="搜索选题..." />
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><span class="stat-dot" style="background:var(--green)"></span> 已敲定 <span id="count-confirmed">0</span></div>
+    <div class="stat-item"><span class="stat-dot" style="background:var(--orange)"></span> 待定 <span id="count-pending">0</span></div>
+    <div class="stat-item">总计 <span id="count-total">0</span></div>
+    <div class="stat-item" id="new-today" style="display:none;"><span class="stat-dot" style="background:var(--blue)"></span> 今日新增 <span id="count-today">0</span></div>
+  </div>
+</div>
+<div class="container">
+  <div id="topics-list"></div>
+  <div class="empty-state" id="empty-state" style="display:none;">没有匹配的选题</div>
+</div>
+<script>
+  let allTopics = [];
+  let currentFilter = 'all';
+  let searchTerm = '';
+  let expandedSet = new Set();
+  let lastStateUpdate = 0;
+  const categoryShort = { screening: '筛选', calibration: '校对', decision: '决策' };
+
+  async function fetchTopics() {
+    try {
+      const res = await fetch('/api/topics');
+      const data = await res.json();
+      allTopics = data.topics;
+      lastStateUpdate = data.serverTime;
+      render();
+      updateSyncTime();
+    } catch (e) {
+      document.getElementById('online-status').textContent = '连接失败';
+      document.querySelector('.live-dot').style.background = 'var(--red)';
+    }
+  }
+
+  async function pollState() {
+    try {
+      const res = await fetch('/api/state');
+      const data = await res.json();
+      const stateIds = Object.keys(data.state);
+      const topicIds = allTopics.map(t => t.id);
+      const newIds = stateIds.filter(id => !topicIds.includes(id));
+      if (newIds.length > 0) { await fetchTopics(); return; }
+      let changed = false;
+      for (const topic of allTopics) {
+        const st = data.state[topic.id];
+        if (st) {
+          if (topic.confirmed !== st.confirmed || topic.notes !== st.notes) {
+            topic.confirmed = st.confirmed;
+            topic.notes = st.notes;
+            topic.updatedAt = st.updatedAt;
+            changed = true;
+          }
+        }
+      }
+      lastStateUpdate = data.serverTime;
+      if (changed) render();
+      updateSyncTime();
+      document.getElementById('online-status').textContent = '实时同步中';
+      document.querySelector('.live-dot').style.background = 'var(--green)';
+    } catch (e) {
+      document.getElementById('online-status').textContent = '同步中断';
+      document.querySelector('.live-dot').style.background = 'var(--red)';
+    }
+  }
+
+  function updateSyncTime() {
+    const d = new Date(lastStateUpdate);
+    const time = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0') + ':' + d.getSeconds().toString().padStart(2,'0');
+    document.getElementById('last-sync').textContent = '最后同步 ' + time;
+  }
+
+  async function toggleConfirm(id) {
+    const topic = allTopics.find(t => t.id === id);
+    if (!topic) return;
+    const newConfirmed = !topic.confirmed;
+    topic.confirmed = newConfirmed;
+    render();
+    try {
+      await fetch('/api/topics/' + id, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirmed: newConfirmed })
+      });
+    } catch (e) {
+      topic.confirmed = !newConfirmed;
+      render();
+    }
+  }
+
+  const notesTimers = {};
+  function saveNotes(id, value) {
+    clearTimeout(notesTimers[id]);
+    notesTimers[id] = setTimeout(async () => {
+      try {
+        await fetch('/api/topics/' + id, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ notes: value })
+        });
+        const indicator = document.getElementById('save-indicator-' + id);
+        if (indicator) { indicator.classList.add('show'); setTimeout(() => indicator.classList.remove('show'), 2000); }
+      } catch (e) {}
+    }, 600);
+  }
+
+  function render() {
+    const list = document.getElementById('topics-list');
+    let filtered = currentFilter === 'all' ? allTopics : allTopics.filter(t => t.category === currentFilter);
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(t =>
+        t.title.toLowerCase().includes(term) ||
+        t.desc.toLowerCase().includes(term) ||
+        (t.tag && t.tag.toLowerCase().includes(term))
+      );
+    }
+    const confirmed = allTopics.filter(t => t.confirmed).length;
+    const pending = allTopics.filter(t => !t.confirmed).length;
+    document.getElementById('count-confirmed').textContent = confirmed;
+    document.getElementById('count-pending').textContent = pending;
+    document.getElementById('count-total').textContent = allTopics.length;
+    const today = new Date().toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }).replace(/\//g, '/');
+    const todayCount = allTopics.filter(t => t.date === today).length;
+    if (todayCount > 0) {
+      document.getElementById('new-today').style.display = 'flex';
+      document.getElementById('count-today').textContent = todayCount;
+    }
+    document.getElementById('empty-state').style.display = filtered.length === 0 ? 'block' : 'none';
+    list.innerHTML = filtered.map(t => {
+      const isExpanded = expandedSet.has(t.id);
+      const catLabel = categoryShort[t.category] || t.category;
+      const questionsHtml = (t.questions || []).map((q, i) =>
+        '<div class="question-item" data-num="' + (i+1) + '">' + escapeHtml(q) + '</div>'
+      ).join('');
+      const updatedTime = t.updatedAt ? new Date(t.updatedAt).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+      const sourceBadge = t.source === 'auto' ? '<span class="source-badge auto">AI生成</span>' : '<span class="source-badge manual">精选</span>';
+      return '<div class="topic-card' + (isExpanded ? ' expanded' : '') + (!t.confirmed ? ' dimmed' : '') + '" data-id="' + t.id + '">' +
+        '<div class="topic-header" onclick="toggleExpand(\'' + t.id + '\')">' +
+          '<div class="topic-meta">' +
+            '<span class="category-badge ' + t.category + '">' + catLabel + '</span>' +
+            '<span class="topic-tag">' + escapeHtml(t.tag) + '</span>' +
+            sourceBadge +
+            '<span class="topic-date">' + escapeHtml(t.date || '') + '</span>' +
+            '<span class="expand-arrow">\u2304</span>' +
+          '</div>' +
+          '<div class="topic-title">' + escapeHtml(t.title) + '</div>' +
+          '<div class="topic-desc">' + escapeHtml(t.desc) + '</div>' +
+        '</div>' +
+        '<div class="topic-body">' +
+          '<div class="questions-label">活动探讨话题</div>' +
+          questionsHtml +
+          '<div class="expert-tag">\uD83E\uDD16 专家协作：选题类型专家 \u00B7 策划专家 \u00B7 文案专家</div>' +
+          '<div class="action-bar">' +
+            '<button class="confirm-btn ' + (t.confirmed ? 'confirmed' : 'unconfirmed') + '" onclick="toggleConfirm(\'' + t.id + '\'); event.stopPropagation();">' +
+              (t.confirmed ? '\u2713 已敲定' : '\u25CB 待定') +
+            '</button>' +
+            (updatedTime ? '<span class="updated-by">更新于 ' + updatedTime + '</span>' : '') +
+          '</div>' +
+          '<div class="notes-section">' +
+            '<div class="notes-label">\uD83D\uDCDD 备注</div>' +
+            '<textarea class="notes-input" id="notes-' + t.id + '" placeholder="点击添加备注...（所有人可见）" ' +
+              'oninput="saveNotes(\'' + t.id + '\', this.value)" onclick="event.stopPropagation()">' + escapeHtml(t.notes || '') + '</textarea>' +
+            '<div class="save-indicator" id="save-indicator-' + t.id + '">\u2713 已保存</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function toggleExpand(id) {
+    if (expandedSet.has(id)) { expandedSet.delete(id); } else { expandedSet.add(id); }
+    render();
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.cat;
+      render();
+    });
+  });
+
+  document.getElementById('search-box').addEventListener('input', (e) => {
+    searchTerm = e.target.value;
+    render();
+  });
+
+  fetchTopics();
+  setInterval(pollState, 3000);
+</script>
+</body>
+</html>

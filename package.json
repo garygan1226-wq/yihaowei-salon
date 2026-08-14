@@ -1,0 +1,12 @@
+{
+  "name": "yihaowei-salon",
+  "version": "1.0.0",
+  "description": "一号位沙龙选题库 - AI时代一号位的筛选、校对与决策",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.22.2"
+  }
+}

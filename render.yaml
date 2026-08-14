@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: yihaowei-salon
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/state
+    autoDeploy: true
